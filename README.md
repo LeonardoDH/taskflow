@@ -1,6 +1,6 @@
 # TaskFlow
 
-Aplicativo de gerenciamento de tarefas pessoais desenvolvido como case técnico para a vaga de **Desenvolvedor Flutter Júnior** na **Keener**.
+Aplicativo de gerenciamento de tarefas pessoais.
 
 ---
 
