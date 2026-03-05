@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/widgets/empty_state.dart';
 import '../../../auth/state/auth_controller.dart';
 import '../../state/task_controller.dart';
 import '../widgets/task_card.dart';
@@ -17,53 +17,99 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TaskFlow'),
+        backgroundColor: const Color(0xFFDDDDDD),
+        elevation: 0,
+        shape: const Border(
+          bottom: BorderSide(color: Colors.black38, width: 2),
+        ),
+        title: Text(
+          'Hatsune Task',
+          style: GoogleFonts.pressStart2p(
+            fontSize: 14,
+            color: const Color(0xFF0040FF),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Sair',
-            onPressed: context.read<AuthController>().logout,
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _FilterChips(),
-          Expanded(
-            child: taskController.isLoading && tasks.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : tasks.isEmpty
-                ? EmptyState(
-                    icon: Icons.task_outlined,
-                    message: _emptyMessage(taskController.filter),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: tasks.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (_, i) => TaskCard(task: tasks[i]),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: context.read<AuthController>().logout,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFCCCCCC),
+                  border: Border(
+                    top: BorderSide(color: Colors.white, width: 2),
+                    left: BorderSide(color: Colors.white, width: 2),
+                    bottom: BorderSide(color: Colors.black54, width: 2),
+                    right: BorderSide(color: Colors.black54, width: 2),
                   ),
+                ),
+                child: const Icon(Icons.logout, size: 18, color: Colors.black54),
+              ),
+            ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/Hatsune Miku.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned.fill(
+            child: Container(color: Colors.black.withValues(alpha: 0.1)),
+          ),
+          Column(
+            children: [
+              _FilterChips(),
+              Expanded(
+                child: taskController.isLoading && tasks.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : tasks.isEmpty
+                    ? const SizedBox.shrink()
+                    : ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: tasks.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (_, i) => TaskCard(task: tasks[i]),
+                      ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      floatingActionButton: GestureDetector(
+        onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const TaskFormPage()),
         ),
-        icon: const Icon(Icons.add),
-        label: const Text('Nova tarefa'),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFDDDDDD),
+            border: const Border(
+              top: BorderSide(color: Colors.white, width: 2),
+              left: BorderSide(color: Colors.white, width: 2),
+              bottom: BorderSide(color: Colors.black54, width: 2),
+              right: BorderSide(color: Colors.black54, width: 2),
+            ),
+          ),
+          child: Text(
+            '+ Nova tarefa',
+            style: GoogleFonts.pressStart2p(
+              color: const Color(0xFF0040FF),
+              fontSize: 11,
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  String _emptyMessage(TaskFilter filter) {
-    return switch (filter) {
-      TaskFilter.pending => 'Nenhuma tarefa pendente.\nQue organizado!',
-      TaskFilter.completed => 'Nenhuma tarefa concluída ainda.',
-      TaskFilter.all => 'Nenhuma tarefa criada.\nToque em + para começar!',
-    };
-  }
 }
 
 class _FilterChips extends StatelessWidget {
@@ -108,12 +154,51 @@ class _Chip extends StatelessWidget {
     required this.current,
   });
 
+  Color get _textColor => switch (filter) {
+    TaskFilter.all => const Color(0xFF57B8FF),
+    TaskFilter.pending => const Color(0xFF00CFCF),
+    TaskFilter.completed => const Color(0xFF0040FF),
+  };
+
   @override
   Widget build(BuildContext context) {
-    return FilterChip(
-      label: Text(label),
-      selected: filter == current,
-      onSelected: (_) => context.read<TaskController>().setFilter(filter),
+    final isSelected = filter == current;
+
+    return GestureDetector(
+      onTap: () => context.read<TaskController>().setFilter(filter),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFCCCCCC) : const Color(0xFFEEEEEE),
+          border: Border(
+            top: BorderSide(
+              color: isSelected ? Colors.black54 : Colors.white,
+              width: 2,
+            ),
+            left: BorderSide(
+              color: isSelected ? Colors.black54 : Colors.white,
+              width: 2,
+            ),
+            bottom: BorderSide(
+              color: isSelected ? Colors.white : Colors.black54,
+              width: 2,
+            ),
+            right: BorderSide(
+              color: isSelected ? Colors.white : Colors.black54,
+              width: 2,
+            ),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: _textColor,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'monospace',
+          ),
+        ),
+      ),
     );
   }
 }

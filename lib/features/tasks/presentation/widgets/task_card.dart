@@ -22,15 +22,21 @@ class TaskCard extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 20),
-        decoration: BoxDecoration(
-          color: Colors.red.shade100,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.delete_outline, color: Colors.red),
+        color: Colors.red.shade300,
+        child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
       confirmDismiss: (_) => _confirmDelete(context),
       onDismissed: (_) => controller.deleteTask(task.id),
-      child: Card(
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFFC5AEE8),
+          border: Border(
+            top: BorderSide(color: Colors.white54, width: 2),
+            left: BorderSide(color: Colors.white54, width: 2),
+            bottom: BorderSide(color: Colors.black38, width: 2),
+            right: BorderSide(color: Colors.black38, width: 2),
+          ),
+        ),
         child: ListTile(
           leading: Checkbox(
             value: task.isCompleted,
@@ -41,9 +47,10 @@ class TaskCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              decoration:
-                  task.isCompleted ? TextDecoration.lineThrough : null,
-              color: task.isCompleted ? Colors.grey : null,
+              fontFamily: 'monospace',
+              fontWeight: FontWeight.bold,
+              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+              color: task.isCompleted ? Colors.black45 : Colors.black87,
             ),
           ),
           subtitle: Column(
@@ -54,7 +61,7 @@ class TaskCard extends StatelessWidget {
                   task.description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12, color: Colors.black87),
                 ),
               const SizedBox(height: 4),
               Row(
@@ -62,26 +69,64 @@ class TaskCard extends StatelessWidget {
                   PriorityBadge(priority: task.priority),
                   if (task.dueDate != null) ...[
                     const SizedBox(width: 8),
-                    Icon(Icons.calendar_today,
-                        size: 12, color: Colors.grey[500]),
+                    const Icon(Icons.calendar_today,
+                        size: 12, color: Colors.black54),
                     const SizedBox(width: 2),
                     Text(
                       DateFormat('dd/MM/yy').format(task.dueDate!),
-                      style:
-                          TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      style: const TextStyle(
+                          fontSize: 11, color: Colors.black54),
                     ),
                   ],
                 ],
               ),
             ],
           ),
-          trailing: IconButton(
-            icon: const Icon(Icons.edit_outlined, size: 20),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => TaskFormPage(task: task)),
-            ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => TaskFormPage(task: task)),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDDDDDD),
+                    border: Border(
+                      top: BorderSide(color: Colors.white, width: 1),
+                      left: BorderSide(color: Colors.white, width: 1),
+                      bottom: BorderSide(color: Colors.black38, width: 1),
+                      right: BorderSide(color: Colors.black38, width: 1),
+                    ),
+                  ),
+                  child: const Icon(Icons.edit_outlined,
+                      size: 16, color: Colors.black54),
+                ),
+              ),
+              const SizedBox(width: 6),
+              GestureDetector(
+                onTap: () async {
+                  final confirm = await _confirmDelete(context);
+                  if (confirm == true) controller.deleteTask(task.id);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDDDDDD),
+                    border: Border(
+                      top: BorderSide(color: Colors.white, width: 1),
+                      left: BorderSide(color: Colors.white, width: 1),
+                      bottom: BorderSide(color: Colors.black38, width: 1),
+                      right: BorderSide(color: Colors.black38, width: 1),
+                    ),
+                  ),
+                  child: const Icon(Icons.delete_outline,
+                      size: 16, color: Colors.red),
+                ),
+              ),
+            ],
           ),
           isThreeLine: true,
         ),

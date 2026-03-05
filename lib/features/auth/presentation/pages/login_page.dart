@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/utils/validators.dart';
-import '../../../../core/widgets/custom_text_field.dart';
-import '../../../../core/widgets/loading_button.dart';
 import '../../state/auth_controller.dart';
+import '../widgets/retro_auth_widgets.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -46,73 +45,74 @@ class _LoginPageState extends State<LoginPage> {
     final isBusy = context.watch<AuthController>().isBusy;
 
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/Hatsune miku home.jpg',
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'TaskFlow',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Gerencie suas tarefas com eficiência',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: Colors.grey),
-                  ),
-                  const SizedBox(height: 40),
-                  CustomTextField(
-                    label: 'E-mail',
-                    controller: _emailController,
-                    validator: Validators.email,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Senha',
-                    controller: _passwordController,
-                    validator: Validators.password,
-                    obscureText: _obscurePassword,
-                    suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      onPressed: () => setState(
-                          () => _obscurePassword = !_obscurePassword),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  LoadingButton(
-                    label: 'Entrar',
-                    onPressed: _submit,
-                    isLoading: isBusy,
-                  ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterPage()),
-                      ),
-                      child: const Text('Não tem conta? Cadastre-se'),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        RetroAuthField(
+                          controller: _emailController,
+                          hint: 'E-mail',
+                          hintColor: const Color(0xFF57B8FF),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: Validators.email,
+                        ),
+                        const SizedBox(height: 8),
+                        RetroAuthField(
+                          controller: _passwordController,
+                          hint: 'Senha',
+                          hintColor: const Color(0xFF00CFCF),
+                          obscureText: _obscurePassword,
+                          validator: Validators.password,
+                          suffixIcon: GestureDetector(
+                            onTap: () => setState(
+                                () => _obscurePassword = !_obscurePassword),
+                            child: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              size: 18,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        RetroAuthButton(
+                          label: 'Entrar',
+                          onPressed: _submit,
+                          isLoading: isBusy,
+                        ),
+                        const SizedBox(height: 8),
+                        RetroAuthButton(
+                          label: 'Criar conta',
+                          secondary: true,
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const RegisterPage()),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -48,6 +48,7 @@ class AuthController extends ChangeNotifier {
     try {
       final user = await _repository.register(email, password);
       await user?.updateDisplayName(name);
+      await _repository.logout();
       return true;
     } on FirebaseAuthException catch (e) {
       _errorMessage = _mapError(e.code);
