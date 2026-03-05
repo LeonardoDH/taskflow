@@ -2,6 +2,8 @@
 
 Aplicativo de gerenciamento de tarefas pessoais.
 
+![Hatsune Task](assets/images/Hatsune%20Task.gif)
+
 ---
 
 ## Funcionalidades
